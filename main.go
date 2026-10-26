@@ -40,6 +40,9 @@ func main() {
 
 	// 5. Setup Router Gin
 	r := gin.Default()
+	if err := r.SetTrustedProxies(nil); err != nil {
+		log.Fatalf("Gagal mengatur trusted proxies: %v", err)
+	}
 
 	// Sajikan file statis frontend (HTML, CSS, JS, Gambar)
 	r.Static("/static", "./web")
@@ -95,4 +98,3 @@ func main() {
 		log.Fatalf("Gagal menjalankan server: %v", err)
 	}
 }
-
