@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk — NutriTrack</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div style="display: flex; justify-content: center; margin-bottom: 0.5rem;">
+        <span class="brand-leaf" style="width: 36px; height: 36px; font-size: 1.25rem;">🌿</span>
+      </div>
+      <h1 class="auth-title">NutriTrack</h1>
+      <p class="auth-subtitle">Masuk untuk memantau nutrisi dan pola makan harian Anda.</p>
+    </div>
+
+    <div id="alertBox" class="alert" style="display: none;"></div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label class="form-label" for="email">Alamat Email</label>
+        <input type="email" id="email" class="form-input" placeholder="nama@email.com" required autocomplete="email">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Kata Sandi</label>
+        <input type="password" id="password" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+
+      <button type="submit" id="btnSubmit" class="btn btn-primary btn-block" style="margin-top: 1.25rem;">
+        Masuk
+      </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-muted);">
+      Belum memiliki akun? <a href="/register" style="color: var(--accent-primary); font-weight: 500; text-decoration: none;">Daftar di sini</a>
+    </div>
+  </div>
+
+  <script src="/static/js/api.js"></script>
+  <script>
+    const form = document.getElementById('loginForm');
+    const alertBox = document.getElementById('alertBox');
+    const btnSubmit = document.getElementById('btnSubmit');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      alertBox.style.display = 'none';
+      btnSubmit.disabled = true;
+      btnSubmit.innerText = 'Memproses...';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        await API.post('/api/auth/login', { email, password });
+        window.location.href = '/';
+      } catch (err) {
+        alertBox.className = 'alert alert-danger';
+        alertBox.innerText = err.message || 'Gagal masuk. Periksa kembali email dan kata sandi Anda.';
+        alertBox.style.display = 'block';
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.innerText = 'Masuk';
+      }
+    });
+  </script>
+</body>
+</html>
+

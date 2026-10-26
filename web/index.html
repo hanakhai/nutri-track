@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — NutriTrack</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- Navigasi Atas -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="/" class="brand">
+        <span class="brand-leaf">🌿</span>
+        <span>NutriTrack</span>
+      </a>
+
+      <div class="nav-actions">
+        <span class="user-badge" id="userNameDisplay">Memuat...</span>
+        <button id="btnOpenTargetModal" class="btn btn-secondary btn-sm">
+          🎯 Atur Target
+        </button>
+        <button id="btnLogout" class="btn btn-secondary btn-sm" style="color: var(--danger);">
+          Keluar
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Kontainer Utama -->
+  <main class="main-container">
+
+    <!-- Kontrol Tanggal & Navigasi -->
+    <div class="dash-header">
+      <div>
+        <h1 style="font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em;">Ringkasan Nutrisi</h1>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Pantau dan seimbangkan asupan nutrisi harian Anda.</p>
+      </div>
+
+      <div class="date-controls">
+        <button id="btnPrevDay" class="btn btn-secondary btn-sm" title="Hari sebelumnya">‹</button>
+        <input type="date" id="datePicker" class="date-input">
+        <button id="btnNextDay" class="btn btn-secondary btn-sm" title="Hari berikutnya">›</button>
+        <button id="btnToday" class="btn btn-secondary btn-sm">Hari Ini</button>
+      </div>
+    </div>
+
+    <!-- Grid 4 Kartu Nutrisi (Kalori, Protein, Karbo, Lemak) -->
+    <div class="nutrition-grid">
+      <!-- Kalori -->
+      <div class="card nutrient-card">
+        <div class="nutrient-header">
+          <span class="nutrient-title">Kalori</span>
+          <span id="badgeCalories" class="nutrient-badge" style="background: #fef3c7; color: #b45309;">0%</span>
+        </div>
+        <div class="nutrient-value-wrap">
+          <span id="valCalories" class="nutrient-val">0</span>
+          <span id="targetCalories" class="nutrient-target">/ 2000 kkal</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div id="fillCalories" class="progress-bar-fill fill-calories" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Protein -->
+      <div class="card nutrient-card">
+        <div class="nutrient-header">
+          <span class="nutrient-title">Protein</span>
+          <span id="badgeProtein" class="nutrient-badge" style="background: #dbeafe; color: #1d4ed8;">0%</span>
+        </div>
+        <div class="nutrient-value-wrap">
+          <span id="valProtein" class="nutrient-val">0g</span>
+          <span id="targetProtein" class="nutrient-target">/ 50g</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div id="fillProtein" class="progress-bar-fill fill-protein" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Karbohidrat -->
+      <div class="card nutrient-card">
+        <div class="nutrient-header">
+          <span class="nutrient-title">Karbohidrat</span>
+          <span id="badgeCarb" class="nutrient-badge" style="background: #dcfce7; color: #15803d;">0%</span>
+        </div>
+        <div class="nutrient-value-wrap">
+          <span id="valCarb" class="nutrient-val">0g</span>
+          <span id="targetCarb" class="nutrient-target">/ 250g</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div id="fillCarb" class="progress-bar-fill fill-carb" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Lemak -->
+      <div class="card nutrient-card">
+        <div class="nutrient-header">
+          <span class="nutrient-title">Lemak</span>
+          <span id="badgeFat" class="nutrient-badge" style="background: #fce7f3; color: #be185d;">0%</span>
+        </div>
+        <div class="nutrient-value-wrap">
+          <span id="valFat" class="nutrient-val">0g</span>
+          <span id="targetFat" class="nutrient-target">/ 70g</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div id="fillFat" class="progress-bar-fill fill-fat" style="width: 0%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tata Letak 2 Kolom: Catatan Makan & Form Tambah -->
+    <div class="content-grid">
+
+      <!-- Kolom Kiri: Sesi Makan Hari Ini -->
+      <div>
+        <h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span>Catatan Makan</span>
+        </h2>
+        <div id="sessionsContainer">
+          <!-- Diisi secara dinamis oleh dashboard.js -->
+        </div>
+      </div>
+
+      <!-- Kolom Kanan: Pencarian Makanan & Form Tambah -->
+      <div>
+        <div class="card" style="position: sticky; top: 5rem;">
+          <h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.85rem;">
+            Cari & Catat Makanan
+          </h2>
+
+          <div class="form-group">
+            <input type="text" id="foodSearchInput" class="form-input" placeholder="🔍 Cari makanan (misal: Nasi, Telur, Ayam)...">
+          </div>
+
+          <!-- Daftar Hasil Pencarian Makanan -->
+          <div id="searchResults" class="search-results"></div>
+
+          <!-- Box Makanan yang Sedang Dipilih -->
+          <div id="selectedFoodBox" style="display: none; margin-top: 1rem; padding: 0.85rem; background: var(--accent-primary-light); border-radius: var(--radius-sm); border: 1px solid #a7f3d0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 600; color: var(--accent-primary-hover);">Makanan Dipilih:</span>
+                <div id="selectedFoodName" style="font-weight: 600; font-size: 0.95rem;"></div>
+              </div>
+              <button type="button" id="btnCancelSelect" class="btn btn-secondary btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">Ganti</button>
+            </div>
+            <div id="calcNutriInfo" style="font-size: 0.785rem; color: var(--text-muted); margin-top: 0.4rem;"></div>
+          </div>
+
+          <!-- Form Tambah ke Sesi Makan -->
+          <form id="mealForm" style="margin-top: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="mealTimeSelect">Waktu Makan</label>
+              <select id="mealTimeSelect" class="form-select">
+                <option value="Sarapan">Sarapan Pagi</option>
+                <option value="Siang" selected>Makan Siang</option>
+                <option value="Malam">Makan Malam</option>
+                <option value="Camilan">Camilan / Snack</option>
+              </select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+              <div class="form-group">
+                <label class="form-label" for="gramInput">Porsi / Berat (Gram)</label>
+                <input type="number" id="gramInput" class="form-input" value="100" min="1" step="any" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="servingUnitInput">Satuan</label>
+                <input type="text" id="servingUnitInput" class="form-input" value="Porsi" placeholder="misal: Porsi / Mangkok">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="servingNoteInput">Catatan Tambahan (Opsional)</label>
+              <input type="text" id="servingNoteInput" class="form-input" placeholder="misal: Digoreng tanpa minyak">
+            </div>
+
+            <button type="submit" id="btnSubmitMeal" class="btn btn-primary btn-block">
+              + Catat ke Menu Hari Ini
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modal Target Nutrisi -->
+  <div id="targetModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="font-size: 1.15rem; font-weight: 600;">🎯 Atur Target Nutrisi Harian</h3>
+        <button id="btnCloseTargetModal" class="btn btn-secondary btn-sm" style="border: none; font-size: 1.1rem;">✕</button>
+      </div>
+
+      <form id="targetForm">
+        <div class="form-group">
+          <label class="form-label" for="targetCaloriesInput">Target Kalori Harian (kkal)</label>
+          <input type="number" id="targetCaloriesInput" class="form-input" required min="500" max="10000" step="any">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="targetProteinInput">Target Protein (gram)</label>
+          <input type="number" id="targetProteinInput" class="form-input" required min="0" max="1000" step="any">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="targetCarbInput">Target Karbohidrat (gram)</label>
+          <input type="number" id="targetCarbInput" class="form-input" required min="0" max="1000" step="any">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="targetFatInput">Target Lemak (gram)</label>
+          <input type="number" id="targetFatInput" class="form-input" required min="0" max="1000" step="any">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+          <button type="submit" id="btnSaveTarget" class="btn btn-primary">
+            Simpan Perubahan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
+
