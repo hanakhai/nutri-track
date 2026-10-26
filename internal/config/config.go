@@ -20,7 +20,7 @@ func LoadConfig() *Config {
 		log.Println("Info: File .env tidak ditemukan, membaca konfigurasi dari system environment.")
 	}
 
-	appPort := os.Getenv("APP_PORT")
+	appPort := os.Getenv("PORT")
 	if appPort == "" {
 		appPort = "8080"
 	}
@@ -47,4 +47,3 @@ func LoadConfig() *Config {
 		Environment: environment,
 	}
 }
-
